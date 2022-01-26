@@ -6,7 +6,7 @@ const  PrettierPlugin = require("prettier-webpack-plugin");
 module.exports = {
 
   entry: './src/index.ts',
-  mode: "development",
+  mode: process.env.NODE_ENV,
   output: {
     path: path.resolve(__dirname, 'dist'),
     filename: 'bundle.js'
