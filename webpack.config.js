@@ -13,6 +13,28 @@ module.exports = {
   },
   module: {
     rules: [
+    //   {
+    //     test: /\.html$/,
+    //     use: [{
+    //         loader: 'file-loader',
+    //         options: {
+    //             name: '[path][name].[ext]'
+    //         }
+    //     }]
+    // },
+    {
+        test: /\.css$/i,
+        use: ['style-loader', 'css-loader'] //style-loader 將css放入js的工具
+    },
+    {
+        test: /\.(sass|scss)$/, //sassloader 
+        use: [
+            'style-loader',
+            'css-loader',
+            'postcss-loader',
+            'sass-loader'
+        ]
+    },
       {
         test: /\.ts$/,
         //use順序由後往前執行
@@ -50,7 +72,9 @@ module.exports = {
       template: './src/index.html'
     }),
   ],
+  devtool: 'source-map',
   //用來設置引用模組
+  target: 'web',
   resolve: {
     extensions: ['.ts', '.js']
   }

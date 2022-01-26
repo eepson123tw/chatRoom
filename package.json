@@ -5,8 +5,8 @@
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "build": "webpack",
-    "serve": "webpack serve --open "
+    "dev serve": "webpack serve --open ",
+    "build": "webpack"
   },
   "author": "allen",
   "license": "ISC",
@@ -16,7 +16,13 @@
     "babel-loader": "^8.2.3",
     "clean-webpack-plugin": "^4.0.0",
     "core-js": "^3.20.3",
+    "css-loader": "^6.5.1",
+    "file-loader": "^6.2.0",
     "html-webpack-plugin": "^5.5.0",
+    "node-sass": "^7.0.1",
+    "postcss-loader": "^6.2.1",
+    "sass-loader": "^12.4.0",
+    "style-loader": "^3.3.1",
     "ts-loader": "^9.2.6",
     "typescript": "^4.5.5",
     "webpack": "^5.67.0",
@@ -24,6 +30,8 @@
     "webpack-dev-server": "^4.7.3"
   },
   "dependencies": {
+    "@babel/polyfill": "^7.12.1",
+    "autoprefixer": "^10.4.2",
     "tslib": "^2.3.1"
   }
 }
