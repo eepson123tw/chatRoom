@@ -84,6 +84,10 @@ module.exports = {
   //用來設置引用模組
   target: 'web',
   resolve: {
-    extensions: ['.ts', '.js']
+    extensions: ['.ts', '.js'],
+    alias:{
+      "@":  path.resolve(__dirname, 'src'),
+      "~":  path.resolve(__dirname, 'src'),
+    }
   }
 };
