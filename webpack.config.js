@@ -1,5 +1,6 @@
 const path = require('path');
 const HTMLWebpackPlugin = require('html-webpack-plugin')
+const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 const { CleanWebpackPlugin } = require('clean-webpack-plugin')
 const  PrettierPlugin = require("prettier-webpack-plugin");
 
@@ -9,7 +10,9 @@ module.exports = {
   mode: process.env.NODE_ENV,
   output: {
     path: path.resolve(__dirname, 'dist'),
-    filename: 'bundle.js'
+    filename: '[name]/index.[hash].js',
+    clean: true,
+    publicPath: '/',
   },
   module: {
     rules: [
@@ -23,18 +26,18 @@ module.exports = {
     //     }]
     // },
     {
-        test: /\.css$/i,
-        use: ['style-loader', 'css-loader'] //style-loader 將css放入js的工具
+      test: /\.css$/i,
+      use: [
+        MiniCssExtractPlugin.loader,
+        {
+          loader: 'css-loader',
+        },
+        {
+          loader: 'postcss-loader'
+        }
+      ],
     },
-    {
-        test: /\.(sass|scss)$/, //sassloader 
-        use: [
-            'style-loader',
-            'css-loader',
-            'postcss-loader',
-            'sass-loader'
-        ]
-    },
+
       {
         test: /\.ts$/,
         //use順序由後往前執行
@@ -69,6 +72,7 @@ module.exports = {
   }
   , plugins: [
     new CleanWebpackPlugin(),
+    new MiniCssExtractPlugin(),
      new HTMLWebpackPlugin({
       template: './src/index.html'
     }), new PrettierPlugin({
@@ -80,7 +84,7 @@ module.exports = {
       extensions: [ ".js", ".ts" ]  // Which file extensions to process
     })
   ],
-  devtool: 'source-map',
+  devtool: 'inline-source-map',
   //用來設置引用模組
   target: 'web',
   resolve: {
