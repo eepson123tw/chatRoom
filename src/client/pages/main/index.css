@@ -1,0 +1,17 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  /* 拓展 html 基本樣式   Extending Preflight*/
+  /* body {
+    @apply bg-gray-200 w-full;
+  } */
+}
+
+@layer components {
+  /*語意化 包裝 但不推薦 可能會造成之後的維護困難*/
+  /* .card {
+    @apply w-2/5 mx-auto px-4 py-3 flex box-border rounded-sm bg-gray-800 yy:bg-yellow-800;
+  } */
+}

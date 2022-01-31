@@ -13,6 +13,12 @@ module.exports = {
       table: { max: "640px" }, //小於等於 600px
       // => @media (max-width: 640px) { ... }
     },
+    extend: {
+      colors: {
+        card: "#ffae00",
+        yellow: "#fff200",
+      },
+    },
   },
   variants: {
     //拓展 原先未被定義的狀態  (自定義)
@@ -20,5 +26,5 @@ module.exports = {
       ringWidth: ["active"],
     },
   },
-  plugins: [],
+  plugins: [require("@tailwindcss/forms")],
 };

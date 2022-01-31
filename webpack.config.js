@@ -3,10 +3,18 @@ const HTMLWebpackPlugin = require('html-webpack-plugin')
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 const { CleanWebpackPlugin } = require('clean-webpack-plugin')
 const  PrettierPlugin = require("prettier-webpack-plugin");
+const CopyPlugin = require("copy-webpack-plugin");
+const CompressionPlugin = require("compression-webpack-plugin");
+const { HotModuleReplacementPlugin } = require("webpack")
+
+const entries = {
+  'main': ['./src/client/pages/main/index.ts'],
+  'chatRoom': ['./src/client/pages/chatRoom/index.ts']
+}
 
 module.exports = {
 
-  entry: './src/index.ts',
+  entry: entries,
   mode: process.env.NODE_ENV,
   output: {
     path: path.resolve(__dirname, 'dist'),
@@ -16,15 +24,6 @@ module.exports = {
   },
   module: {
     rules: [
-    //   {
-    //     test: /\.html$/,
-    //     use: [{
-    //         loader: 'file-loader',
-    //         options: {
-    //             name: '[path][name].[ext]'
-    //         }
-    //     }]
-    // },
     {
       test: /\.css$/i,
       use: [
@@ -65,33 +64,68 @@ module.exports = {
               ]
             }
 
-          }, 'ts-loader'],
+          },{
+            loader:'ts-loader',
+            options:{
+              //希望在前端環境下可以使用tree shaking
+              configFile:'tsconfigClient.json'
+            }
+          } ],
         exclude: /node-modules/
       },
     ]
   }
   , plugins: [
     new CleanWebpackPlugin(),
-    new MiniCssExtractPlugin(),
-     new HTMLWebpackPlugin({
-      template: './src/index.html'
-    }), new PrettierPlugin({
+
+    new CopyPlugin({
+      patterns: [{
+        from: "assets",
+        to: "assets",
+        force: true,
+        noErrorOnMissing: true
+      }]
+    }),
+    new HTMLWebpackPlugin({
+      filename: '[name]/main.html',  //輸出名
+      chunks: ['main'], //指定入口js是哪個部分
+      template: './src/client/pages/main/index.html', //輸入指定的資料夾與檔案
+      title: 'Webpack前端自動化開發',
+      description: 'Webpack前端自動化開發，tailwind+typeScript',
+      Keywords: '測試連動',
+    }), new HTMLWebpackPlugin({
+      filename: '[name]/chatRoom.html',
+      chunks: ['chatRoom'],
+      template: './src/client/pages/chatRoom/index.html',
+      title: 'Webpack前端自動化開發',
+      description: 'Webpack前端自動化開發，tailwind+typeScript',
+      Keywords: '測試連動',
+    }),
+    new MiniCssExtractPlugin({
+      filename: '[name]/index.[hash].css'
+    }),
+    new PrettierPlugin({
       printWidth: 80,               // Specify the length of line that the printer will wrap on.
       tabWidth: 2,                  // Specify the number of spaces per indentation-level.
       useTabs: false,               // Indent lines with tabs instead of spaces.
       semi: true,                   // Print semicolons at the ends of statements.
       encoding: 'utf-8',            // Which encoding scheme to use on files
       extensions: [ ".js", ".ts" ]  // Which file extensions to process
-    })
+    }),
+    new CompressionPlugin(),
+    new HotModuleReplacementPlugin(),
   ],
   devtool: 'inline-source-map',
   //用來設置引用模組
   target: 'web',
   resolve: {
-    extensions: ['.ts', '.js'],
+    extensions: [".ts", ".js"],
     alias:{
       "@":  path.resolve(__dirname, 'src'),
-      "~":  path.resolve(__dirname, 'src'),
     }
-  }
+  },
+  devServer: {
+    static: './dist',
+  },
+
 };
