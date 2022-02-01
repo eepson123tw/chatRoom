@@ -8,6 +8,9 @@ export default function (app: Express) {
   //webpack-dev-middleware 是一个封装器(wrapper)，它可以把 webpack 处理过的文件发送到一个 server。
   //webpack-dev-server 在内部使用了它，然而它也可以作为一个单独的 package 来使用，
   //以便根据需求进行更多自定义设置。
+  app.get('/', function (req, res, next) {
+    res.redirect('/main/main.html')
+  })
   app.get('/main', function (req, res, next) {
     res.redirect('/main/main.html')
   })

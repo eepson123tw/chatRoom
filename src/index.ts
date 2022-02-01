@@ -1,11 +1,62 @@
-import devServer from './sever/dev'
-import prodServer from './sever/prod'
+import devServer from '@/sever/dev'
+import prodServer from '@/sever/prod'
 import express from 'express'
-
-import { name } from '@/utils'
+import { Server } from 'socket.io'
+import http from 'http'
+import moment from 'moment'
+import UserService from '@/service/UserService'
 
 const port = 3000
 const app = express()
+const server = http.createServer(app)
+const io = new Server(server)
+const userService = new UserService()
+
+//監測連接 socket 為前端
+io.on('connection', (socket) => {
+  //區分使用者
+
+  socket.emit('userId', socket.id)
+
+  socket.on(
+    'join',
+    ({ userName, roomName }: { userName: string; roomName: string }) => {
+      const userData = userService.userDataInfo(socket.id, userName, roomName)
+
+      //建立不被干擾的唯一空間
+      socket.join(userData.roomName)
+
+      userService.addUser(userData)
+      //發送至空間
+      //broadcast 不會播送給自己
+      socket.broadcast
+        .to(userData.roomName)
+        .emit('join', `${userName} 加入了${roomName}聊天室`)
+    }
+  )
+  socket.on('chat', (msg) => {
+    const userData = userService.getUser(socket.id)
+    const time = moment.utc()
+    //to 會播送給自己
+    if (userData) {
+      io.to(userData.roomName).emit('chat', {
+        userData,
+        msg,
+        time
+      })
+    }
+  })
+
+  socket.on('disconnect', () => {
+    const userData = userService.getUser(socket.id)
+    if (userData?.userName) {
+      socket.broadcast
+        .to(userData.roomName)
+        .emit('leave', `${userData.userName}離開聊天室`)
+    }
+    userService.deleteUser(socket.id)
+  })
+})
 
 // 執行npm run dev本地開發 or 執行npm run start部署後啟動線上伺服器
 if (process.env.NODE_ENV === 'development') {
@@ -14,9 +65,7 @@ if (process.env.NODE_ENV === 'development') {
   prodServer(app)
 }
 
-console.log('server side', name)
-
-app.listen(port, () => {
+server.listen(port, () => {
   console.log(`The application is running on port ${port}.`)
 })
 
